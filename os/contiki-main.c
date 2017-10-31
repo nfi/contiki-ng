@@ -79,7 +79,7 @@ main(void)
   clock_init();
   rtimer_init();
   process_init();
-  process_start(&etimer_process, NULL);
+  etimer_init();
   ctimer_init();
   watchdog_init();
 
