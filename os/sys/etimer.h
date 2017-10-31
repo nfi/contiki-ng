@@ -244,10 +244,16 @@ int etimer_pending(void);
  */
 clock_time_t etimer_next_expiration_time(void);
 
-
 /** @} */
 
-PROCESS_NAME(etimer_process);
+/**
+ * \brief      Initialize the event timer library.
+ *
+ *             This function initializes the event timer library and
+ *             should be called from the system boot up code.
+ */
+void etimer_init(void);
+
 #endif /* ETIMER_H_ */
 /** @} */
 /** @} */

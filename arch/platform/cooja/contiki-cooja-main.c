@@ -185,9 +185,9 @@ contiki_init()
 
   /* Start Contiki processes */
 
-  process_start(&etimer_process, NULL);
-  process_start(&sensors_process, NULL);
+  etimer_init();
   ctimer_init();
+  process_start(&sensors_process, NULL);
 
   /* Print startup information */
   printf(CONTIKI_VERSION_STRING " started. ");
