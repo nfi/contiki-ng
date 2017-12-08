@@ -78,8 +78,8 @@ i2c_dev_status_t i2c_dev_restart_timeout(i2c_device_t *dev);
 i2c_dev_status_t i2c_dev_write_byte(i2c_device_t *dev, uint8_t data);
 i2c_dev_status_t i2c_dev_read_byte(i2c_device_t *dev, uint8_t *data);
 i2c_dev_status_t i2c_dev_write(i2c_device_t *dev, const uint8_t *data,
-                               int size);
-i2c_dev_status_t i2c_dev_read(i2c_device_t *dev, uint8_t *data, int size);
+                               int size, int start, int stop);
+i2c_dev_status_t i2c_dev_read(i2c_device_t *dev, uint8_t *data, int size, int start, int stop);
 i2c_dev_status_t i2c_dev_stop(i2c_device_t *dev);
 
 i2c_dev_status_t i2c_dev_write_register(i2c_device_t *dev,
@@ -94,9 +94,8 @@ i2c_dev_status_t i2c_arch_lock(i2c_device_t *dev);
 i2c_dev_status_t i2c_arch_unlock(i2c_device_t *dev);
 i2c_dev_status_t i2c_arch_restart_timeout(i2c_device_t *dev);
 
-i2c_dev_status_t i2c_arch_read(i2c_device_t *dev, uint8_t *data, int len);
-i2c_dev_status_t i2c_arch_write(i2c_device_t *dev,
-                                const uint8_t *data, int len);
+i2c_dev_status_t i2c_arch_read(i2c_device_t *dev, uint8_t* buffer, int length, uint8_t start, uint8_t stop);
+i2c_dev_status_t i2c_arch_write(i2c_device_t *dev, const uint8_t* buffer, int length, uint8_t start, uint8_t stop);
 i2c_dev_status_t i2c_arch_stop(i2c_device_t *dev);
 
 #endif /* I2C_DEV_H_ */

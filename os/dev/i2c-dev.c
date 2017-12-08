@@ -104,16 +104,16 @@ i2c_dev_write_byte(i2c_device_t *dev, uint8_t data)
   if(!i2c_dev_has_bus(dev)) {
     return I2C_DEV_STATUS_BUS_LOCKED;
   }
-  return i2c_arch_write(dev, &data, 1);
+  return i2c_arch_write(dev, &data, 1, 1, 1);
 }
 /*---------------------------------------------------------------------------*/
 i2c_dev_status_t
-i2c_dev_write(i2c_device_t *dev, const uint8_t *data, int size)
+i2c_dev_write(i2c_device_t *dev, const uint8_t *data, int size, int start, int stop)
 {
   if(!i2c_dev_has_bus(dev)) {
     return I2C_DEV_STATUS_BUS_LOCKED;
   }
-  return i2c_arch_write(dev, data, size);
+  return i2c_arch_write(dev, data, size, start, stop);
 }
 /*---------------------------------------------------------------------------*/
 i2c_dev_status_t
@@ -122,16 +122,16 @@ i2c_dev_read_byte(i2c_device_t *dev, uint8_t *data)
   if(!i2c_dev_has_bus(dev)) {
     return I2C_DEV_STATUS_BUS_LOCKED;
   }
-  return i2c_arch_read(dev, data, 1);
+  return i2c_arch_read(dev, data, 1, 1, 1);
 }
 /*---------------------------------------------------------------------------*/
 i2c_dev_status_t
-i2c_dev_read(i2c_device_t *dev, uint8_t *data, int size)
+i2c_dev_read(i2c_device_t *dev, uint8_t *data, int size, int start, int stop)
 {
   if(!i2c_dev_has_bus(dev)) {
     return I2C_DEV_STATUS_BUS_LOCKED;
   }
-  return i2c_arch_read(dev, data, size);
+  return i2c_arch_read(dev, data, size, start, stop);
 }
 /*---------------------------------------------------------------------------*/
 /* Read a register - e.g. first write a data byte to select register to read from, then read */
@@ -140,12 +140,12 @@ i2c_dev_read_register(i2c_device_t *dev, uint8_t reg, uint8_t *data, int size)
 {
   i2c_dev_status_t status;
   /* write the register first */
-  status = i2c_dev_write_byte(dev, reg);
+  status = i2c_dev_write(dev, &reg, 1, 1, 0);
   if(status != I2C_DEV_STATUS_OK) {
     return status;
   }
   /* then read the value */
-  status = i2c_dev_read(dev, data, size);
+  status = i2c_dev_read(dev, data, size, 1, 1);
   if(status != I2C_DEV_STATUS_OK) {
     return status;
   }
@@ -163,7 +163,7 @@ i2c_dev_write_register(i2c_device_t *dev, uint8_t reg, uint8_t data)
   buffer[0] = reg;
   buffer[1] = data;
 
-  status = i2c_dev_write(dev, buffer, 2);
+  status = i2c_dev_write(dev, buffer, 2, 1, 1);
   if(status != I2C_DEV_STATUS_OK) {
     return status;
   }
@@ -182,7 +182,7 @@ i2c_dev_write_register_buf(i2c_device_t *dev, uint8_t reg, const uint8_t *data, 
   buffer[0] = reg;
   memcpy(&buffer[1], data, size);
 
-  status = i2c_dev_write(dev, buffer, size + 1);
+  status = i2c_dev_write(dev, buffer, size + 1, 1, 1);
   if(status != I2C_DEV_STATUS_OK) {
     return status;
   }

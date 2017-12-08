@@ -95,23 +95,136 @@ convert_status(uint8_t status)
 }
 /*---------------------------------------------------------------------------*/
 i2c_dev_status_t
-i2c_arch_write(i2c_device_t *dev, const uint8_t *data, int len)
+i2c_arch_write(i2c_device_t *dev, const uint8_t *buffer,
+               int length, uint8_t start, uint8_t stop)
 {
-  i2c_dev_status_t status;
-  /* Convert the device address from 8 bit to 7 bit */
-  status = i2c_burst_send(dev->address >> 1, (uint8_t *)data, len);
-  /* Translate status into something sensible... */
-  return convert_status(status);
+  int last;
+  int index = 0;
+  uint8_t status;
+
+  if((length == 0) || buffer == NULL) {
+    return convert_status(I2CM_STAT_INVALID);
+  }
+
+  if(length == 1) {
+    if(start) {
+      i2c_master_set_slave_address(dev->address >> 1, I2C_SEND);
+      if(stop) {
+        last = I2C_MASTER_CMD_SINGLE_SEND;
+      } else {
+        last = I2C_MASTER_CMD_BURST_SEND_START;
+      }
+    } else if(stop) {
+      last = I2C_MASTER_CMD_BURST_SEND_FINISH;
+    } else {
+      last = I2C_MASTER_CMD_BURST_SEND_CONT;
+    }
+  } else {
+    if(stop) {
+      last = I2C_MASTER_CMD_BURST_SEND_FINISH;
+    } else {
+      last = I2C_MASTER_CMD_BURST_SEND_CONT;
+    }
+
+    i2c_master_data_put(buffer[index++]);
+
+    if(start) {
+      i2c_master_set_slave_address(dev->address >> 1, I2C_SEND);
+      i2c_master_command(I2C_MASTER_CMD_BURST_SEND_START);
+    } else {
+      i2c_master_command(I2C_MASTER_CMD_BURST_SEND_CONT);
+    }
+
+    while(1) {
+      while(i2c_master_busy())
+        ;
+      if((status = i2c_master_error()) != I2C_MASTER_ERR_NONE) {
+        return convert_status(status);
+      }
+
+      if(index == length - 1) {
+        break;
+      }
+
+      i2c_master_data_put(buffer[index++]);
+      i2c_master_command(I2C_MASTER_CMD_BURST_SEND_CONT);
+    }
+  }
+
+  i2c_master_data_put(buffer[index++]);
+  i2c_master_command(last);
+  while(i2c_master_busy())
+    ;
+  if((status = i2c_master_error()) != I2C_MASTER_ERR_NONE) {
+    return convert_status(status);
+  }
+
+  return I2C_DEV_STATUS_OK;
 }
 /*---------------------------------------------------------------------------*/
 i2c_dev_status_t
-i2c_arch_read(i2c_device_t *dev, uint8_t *data, int len)
+i2c_arch_read(i2c_device_t *dev, uint8_t *buffer, int length,
+              uint8_t start, uint8_t stop)
 {
-  i2c_dev_status_t status;
-  /* Convert the device address from 8 bit to 7 bit */
-  status = i2c_burst_receive(dev->address >> 1, data, len);
-  /* Translate status into the defined status */
-  return convert_status(status);
+  int last;
+  int index = 0;
+  uint8_t status;
+
+  if((length == 0) || buffer == NULL) {
+    return convert_status(I2CM_STAT_INVALID);
+  }
+
+  if(length == 1) {
+    if(start) {
+      i2c_master_set_slave_address(dev->address >> 1, I2C_RECEIVE);
+      if(stop) {
+        last = I2C_MASTER_CMD_SINGLE_RECEIVE;
+      } else {
+        last = I2C_MASTER_CMD_BURST_RECEIVE_START;
+      }
+    } else if(stop) {
+      last = I2C_MASTER_CMD_BURST_RECEIVE_FINISH;
+    } else {
+      last = I2C_MASTER_CMD_BURST_RECEIVE_CONT;
+    }
+  } else {
+    if(stop) {
+      last = I2C_MASTER_CMD_BURST_RECEIVE_FINISH;
+    } else {
+      last = I2C_MASTER_CMD_BURST_RECEIVE_CONT;
+    }
+
+    if(start) {
+      i2c_master_set_slave_address(dev->address >> 1, I2C_RECEIVE);
+      i2c_master_command(I2C_MASTER_CMD_BURST_RECEIVE_START);
+    } else {
+      i2c_master_command(I2C_MASTER_CMD_BURST_RECEIVE_CONT);
+    }
+
+    while(1) {
+      while(i2c_master_busy())
+        ;
+      if((status = i2c_master_error()) != I2C_MASTER_ERR_NONE) {
+        return convert_status(status);
+      }
+      buffer[index++] = i2c_master_data_get();
+
+      if(index == length - 1) {
+        break;
+      }
+      i2c_master_command(I2C_MASTER_CMD_BURST_RECEIVE_CONT);
+    }
+  }
+
+  i2c_master_command(last);
+  while(i2c_master_busy())
+    ;
+  if((status = i2c_master_error()) != I2C_MASTER_ERR_NONE) {
+    return convert_status(status);
+  }
+  buffer[index++] = i2c_master_data_get();
+
+  return I2C_DEV_STATUS_OK;
 }
 /*---------------------------------------------------------------------------*/
 i2c_dev_status_t
