@@ -92,8 +92,6 @@ PROCESS_THREAD(er_example_client, ev, data)
 
   coap_endpoint_parse(SERVER_EP, strlen(SERVER_EP), &server_ep);
 
-  etimer_set(&et, TOGGLE_INTERVAL * CLOCK_SECOND);
-
 #if PLATFORM_HAS_BUTTON
 #if !PLATFORM_SUPPORTS_BUTTON_HAL
   SENSORS_ACTIVATE(button_sensor);
@@ -101,6 +99,13 @@ PROCESS_THREAD(er_example_client, ev, data)
   printf("Press a button to request %s\n", service_urls[uri_switch]);
 #endif /* PLATFORM_HAS_BUTTON */
 
+  while(!coap_endpoint_is_connected(&server_ep)) {
+    coap_endpoint_connect(&server_ep);
+    etimer_set(&et, CLOCK_SECOND);
+    PROCESS_WAIT_EVENT_UNTIL(etimer_expired(&et));
+  }
+
+  etimer_set(&et, TOGGLE_INTERVAL * CLOCK_SECOND);
   while(1) {
     PROCESS_YIELD();
 
