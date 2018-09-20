@@ -101,7 +101,7 @@ PROCESS_THREAD(er_example_client, ev, data)
 
   while(!coap_endpoint_is_connected(&server_ep)) {
     coap_endpoint_connect(&server_ep);
-    etimer_set(&et, CLOCK_SECOND);
+    etimer_set(&et, CLOCK_SECOND * 15);
     PROCESS_WAIT_EVENT_UNTIL(etimer_expired(&et));
   }
 
