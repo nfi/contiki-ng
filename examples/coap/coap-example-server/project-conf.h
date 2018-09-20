@@ -41,4 +41,6 @@
 
 #define LOG_LEVEL_APP LOG_LEVEL_DBG
 
+#define COAP_MAX_CHUNK_SIZE           256
+
 #endif /* PROJECT_CONF_H_ */

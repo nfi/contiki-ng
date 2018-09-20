@@ -44,4 +44,6 @@
 /* Enable client-side support for COAP observe */
 #define COAP_OBSERVE_CLIENT            1
 
+#define COAP_MAX_CHUNK_SIZE           256
+
 #endif /* PROJECT_CONF_H_ */
