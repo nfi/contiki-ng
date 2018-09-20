@@ -110,31 +110,31 @@ PROCESS_THREAD(er_example_client, ev, data)
     PROCESS_YIELD();
 
     if(etimer_expired(&et)) {
-      printf("--Toggle timer--\n");
+      /* printf("--Toggle timer--\n"); */
 
-      /* prepare request, TID is set by COAP_BLOCKING_REQUEST() */
-      coap_init_message(request, COAP_TYPE_CON, COAP_POST, 0);
-      coap_set_header_uri_path(request, service_urls[1]);
+/*       /\* prepare request, TID is set by COAP_BLOCKING_REQUEST() *\/ */
+/*       coap_init_message(request, COAP_TYPE_CON, COAP_POST, 0); */
+/*       coap_set_header_uri_path(request, service_urls[1]); */
 
-      const char msg[] = "Toggle!";
+/*       const char msg[] = "Toggle!"; */
 
-      coap_set_payload(request, (uint8_t *)msg, sizeof(msg) - 1);
+/*       coap_set_payload(request, (uint8_t *)msg, sizeof(msg) - 1); */
 
-      LOG_INFO_COAP_EP(&server_ep);
-      LOG_INFO_("\n");
+/*       LOG_INFO_COAP_EP(&server_ep); */
+/*       LOG_INFO_("\n"); */
 
-      COAP_BLOCKING_REQUEST(&server_ep, request, client_chunk_handler);
+/*       COAP_BLOCKING_REQUEST(&server_ep, request, client_chunk_handler); */
 
-      printf("\n--Done--\n");
+/*       printf("\n--Done--\n"); */
 
-      etimer_reset(&et);
+/*       etimer_reset(&et); */
 
-#if PLATFORM_HAS_BUTTON
-#if PLATFORM_SUPPORTS_BUTTON_HAL
-    } else if(ev == button_hal_release_event) {
-#else
-    } else if(ev == sensors_event && data == &button_sensor) {
-#endif
+/* #if PLATFORM_HAS_BUTTON */
+/* #if PLATFORM_SUPPORTS_BUTTON_HAL */
+/*     } else if(ev == button_hal_release_event) { */
+/* #else */
+/*     } else if(ev == sensors_event && data == &button_sensor) { */
+/* #endif */
 
       /* send a request to notify the end of the process */
 
