@@ -41,6 +41,7 @@
 #include <string.h>
 #include "contiki.h"
 #include "coap-engine.h"
+#include "net/routing/routing.h"
 
 #if PLATFORM_SUPPORTS_BUTTON_HAL
 #include "dev/button-hal.h"
@@ -87,6 +88,9 @@ AUTOSTART_PROCESSES(&er_example_server);
 PROCESS_THREAD(er_example_server, ev, data)
 {
   PROCESS_BEGIN();
+
+  /* Initialize DAG root */
+  NETSTACK_ROUTING.root_start();
 
   PROCESS_PAUSE();
 
