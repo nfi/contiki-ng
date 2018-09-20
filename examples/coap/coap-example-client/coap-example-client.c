@@ -69,9 +69,9 @@ static struct etimer et;
 /* leading and ending slashes only for demo purposes, get cropped automatically when setting the Uri-Path */
 char *service_urls[NUMBER_OF_URLS] =
 { ".well-known/core", "/actuators/toggle", "battery/", "error/in//path" };
-#if PLATFORM_HAS_BUTTON
+/* #if PLATFORM_HAS_BUTTON */
 static int uri_switch = 0;
-#endif
+/* #endif */
 
 /* This function is will be passed to COAP_BLOCKING_REQUEST() to handle responses. */
 void
@@ -92,12 +92,12 @@ PROCESS_THREAD(er_example_client, ev, data)
 
   coap_endpoint_parse(SERVER_EP, strlen(SERVER_EP), &server_ep);
 
-#if PLATFORM_HAS_BUTTON
-#if !PLATFORM_SUPPORTS_BUTTON_HAL
-  SENSORS_ACTIVATE(button_sensor);
-#endif
-  printf("Press a button to request %s\n", service_urls[uri_switch]);
-#endif /* PLATFORM_HAS_BUTTON */
+/* #if PLATFORM_HAS_BUTTON */
+/* #if !PLATFORM_SUPPORTS_BUTTON_HAL */
+/*   SENSORS_ACTIVATE(button_sensor); */
+/* #endif */
+/*   printf("Press a button to request %s\n", service_urls[uri_switch]); */
+/* #endif /\* PLATFORM_HAS_BUTTON *\/ */
 
   while(!coap_endpoint_is_connected(&server_ep)) {
     coap_endpoint_connect(&server_ep);
@@ -127,7 +127,7 @@ PROCESS_THREAD(er_example_client, ev, data)
 
 /*       printf("\n--Done--\n"); */
 
-/*       etimer_reset(&et); */
+      etimer_reset(&et);
 
 /* #if PLATFORM_HAS_BUTTON */
 /* #if PLATFORM_SUPPORTS_BUTTON_HAL */
@@ -152,7 +152,7 @@ PROCESS_THREAD(er_example_client, ev, data)
       printf("\n--Done--\n");
 
       uri_switch = (uri_switch + 1) % NUMBER_OF_URLS;
-#endif /* PLATFORM_HAS_BUTTON */
+/* #endif /\* PLATFORM_HAS_BUTTON *\/ */
     }
   }
 
