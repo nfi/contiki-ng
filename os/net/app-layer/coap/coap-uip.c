@@ -585,7 +585,64 @@ get_psk_info(struct dtls_context_t *ctx,
 
   return dtls_alert_fatal_create(DTLS_ALERT_INTERNAL_ERROR);
 }
+/*---------------------------------------------------------------------------*/
+#if DTLS_ECC
+static int
+get_ecdsa_key(struct dtls_context_t *ctx,
+              const session_t *session,
+              const dtls_ecdsa_key_t **result)
+{
+  static coap_keystore_rpk_entry_t entry;
+  static dtls_ecdsa_key_t key;
 
+  if(dtls_keystore == NULL) {
+    LOG_DBG("--- No key store available ---\n");
+    return 0;
+  }
+
+  memset(&entry, 0, sizeof(entry));
+  if(dtls_keystore->coap_get_rpk_info &&
+     dtls_keystore->coap_get_rpk_info((coap_endpoint_t *)session, &entry) &&
+     entry.type == COAP_KEYSTORE_RPK_TYPE_ECDH_CURVE_SECP256R1) {
+    memset(&key, 0, sizeof(key));
+    key.curve = DTLS_ECDH_CURVE_SECP256R1;
+    key.priv_key = entry.private_key;
+    key.pub_key_x = entry.public_key_x;
+    key.pub_key_y = entry.public_key_y;
+    if(result) {
+      *result = &key;
+    }
+    return 1;
+  }
+  return dtls_alert_fatal_create(DTLS_ALERT_UNSUPPORTED_CERTIFICATE);
+}
+#endif /* DTLS_ECC */
+/*---------------------------------------------------------------------------*/
+#if DTLS_ECC
+static int verify_ecdsa_key(struct dtls_context_t *ctx,
+                            const session_t *session,
+                            const unsigned char *other_pub_x,
+                            const unsigned char *other_pub_y,
+                            size_t key_size)
+{
+  if(dtls_keystore == NULL) {
+    LOG_DBG("--- No key store available ---\n");
+    return 0;
+  }
+
+  if(dtls_keystore->coap_verify_rpk) {
+    if(dtls_keystore->coap_verify_rpk((coap_endpoint_t *)session,
+                                      (const uint8_t *)other_pub_x,
+                                      (const uint8_t *)other_pub_y,
+                                      (unsigned)key_size)) {
+      return 1;
+    }
+    return 0;
+  }
+  return dtls_alert_fatal_create(DTLS_ALERT_UNSUPPORTED_CERTIFICATE);
+}
+#endif /* DTLS_ECC */
+/*---------------------------------------------------------------------------*/
 
 static dtls_handler_t cb = {
   .write = output_to_peer,
@@ -595,8 +652,8 @@ static dtls_handler_t cb = {
   .get_psk_info = get_psk_info,
 #endif /* DTLS_PSK */
 #ifdef DTLS_ECC
-  /* .get_ecdsa_key = get_ecdsa_key, */
-  /* .verify_ecdsa_key = verify_ecdsa_key */
+  .get_ecdsa_key = get_ecdsa_key,
+  .verify_ecdsa_key = verify_ecdsa_key
 #endif /* DTLS_ECC */
 };
 

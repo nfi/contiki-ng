@@ -66,15 +66,34 @@ typedef struct {
 } coap_keystore_psk_entry_t;
 
 /**
+ * The structure of a CoAP DTLS raw public key info.
+ */
+typedef enum {
+  COAP_KEYSTORE_RPK_TYPE_ECDH_CURVE_SECP256R1
+} coap_keystore_rpk_type_t;
+
+typedef struct {
+  coap_keystore_rpk_type_t type;
+  uint8_t private_key[32];
+  uint8_t public_key_x[32];
+  uint8_t public_key_y[32];
+} coap_keystore_rpk_entry_t;
+
+/**
  * The structure of a CoAP keystore.
  *
  * The keystore implementation provides a function callback for each type of
- * authorization supported. The API currently only specifies a function
- * callback for pre-shared keys.
+ * authorization supported.
  */
 typedef struct {
   int (* coap_get_psk_info)(const coap_endpoint_t *address_info,
                             coap_keystore_psk_entry_t *info);
+  int (* coap_get_rpk_info)(const coap_endpoint_t *address_info,
+                            coap_keystore_rpk_entry_t *info);
+  int (* coap_verify_rpk)(const coap_endpoint_t *address_info,
+                          const uint8_t *pub_x,
+                          const uint8_t *pub_y,
+                          unsigned key_size);
 } coap_keystore_t;
 
 /**
