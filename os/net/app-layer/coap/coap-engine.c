@@ -382,6 +382,7 @@ coap_engine_init(void)
 
   coap_activate_resource(&res_well_known_core, ".well-known/core");
 
+  coap_observe_init();
   coap_transport_init();
   coap_init_connection();
 }
