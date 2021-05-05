@@ -1,4 +1,4 @@
-FROM i386/ubuntu:18.04
+FROM ubuntu:18.04
 
 ENV DEBIAN_FRONTEND noninteractive
 
@@ -23,7 +23,8 @@ RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 3FA7E03280
     gtk-sharp2 \
     iputils-tracepath \
     iputils-ping \
-    libcanberra-gtk-module:i386 \
+    lib32z1 \
+    libcanberra-gtk-module \
     libcoap-1-0-bin \
     libfreetype6-dev \
     libgtk2.0-0 \
@@ -56,9 +57,9 @@ RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 3FA7E03280
   && apt-get -qq clean
 
 # Install ARM toolchain
-RUN wget -nv https://github.com/Yagoor/gcc-arm-none-eabi/releases/download/9-2020-q2-update/gcc-arm-none-eabi-9-2020-q4-major-i386-linux.tar.bz2 && \
-  tar xjf gcc-arm-none-eabi-9-2020-q4-major-i386-linux.tar.bz2 -C /tmp/ && \
-  cp -f -r /tmp/gcc-arm-none-eabi-9-2020-q4-major/* /usr/local/ && \
+RUN wget -nv https://developer.arm.com/-/media/Files/downloads/gnu-rm/9-2020q2/gcc-arm-none-eabi-9-2020-q2-update-x86_64-linux.tar.bz2 && \
+  tar xjf gcc-arm-none-eabi-9-2020-q2-update-x86_64-linux.tar.bz2 -C /tmp/ && \
+  cp -f -r /tmp/gcc-arm-none-eabi-9-2020-q2-update/* /usr/local/ && \
   rm -rf /tmp/gcc-arm-none-eabi-* gcc-arm-none-eabi-*-linux.tar.bz2
 
 # Install msp430 toolchain
@@ -90,12 +91,11 @@ RUN wget -nv https://developer.nordicsemi.com/nRF5_IoT_SDK/nRF5_IoT_SDK_v0.9.x/n
 ENV NRF52_SDK_ROOT /usr/nrf52-sdk
 
 # Install nRF Command Line tools
-RUN wget -nv https://www.nordicsemi.com/-/media/Software-and-other-downloads/Desktop-software/nRF-command-line-tools/sw/Versions-10-x-x/10-12-1/nRFCommandLineTools10121Linuxi386.tar.gz && \
+RUN wget -nv https://www.nordicsemi.com/-/media/Software-and-other-downloads/Desktop-software/nRF-command-line-tools/sw/Versions-10-x-x/10-12-1/nRFCommandLineTools10121Linuxamd64.tar.gz && \
   mkdir /tmp/nrf-cli-tools && \
-  tar xzf nRFCommandLineTools10121Linuxi386.tar.gz -C /tmp/nrf-cli-tools && \
-  dpkg -i /tmp/nrf-cli-tools/JLink_Linux_V688a_i386.deb && \
-  dpkg -i /tmp/nrf-cli-tools/nRF-Command-Line-Tools_10_12_1_Linux-i386.deb && \
-  ln -s /opt/SEGGER/JLink_V688a/libjlinkarm.so /opt/SEGGER/JLink_V688a/libjlinkarm_x86.so && \
+  tar xzf nRFCommandLineTools10121Linuxamd64.tar.gz -C /tmp/nrf-cli-tools && \
+  dpkg -i /tmp/nrf-cli-tools/JLink_Linux_V688a_x86_64.deb && \
+  dpkg -i /tmp/nrf-cli-tools/nRF-Command-Line-Tools_10_12_1_Linux-amd64.deb && \
   rm -rf nRFCommandLineTools10121Linuxi386.tar.gz /tmp/nrf-cli-tools
 
 # Install sphinx and sphinx_rtd_theme, required for building and testing the
@@ -138,8 +138,8 @@ RUN echo "#!/bin/bash\nant -Dbasedir=${COOJA} -f ${COOJA}/build.xml run" > ${HOM
   chmod +x ${HOME}/cooja
 
 # Make sure we're using Java 8 for Cooja
-RUN sudo update-java-alternatives --set /usr/lib/jvm/java-1.8.0-openjdk-i386
-ENV JAVA_HOME           /usr/lib/jvm/java-8-openjdk-i386/
+RUN sudo update-java-alternatives --set /usr/lib/jvm/java-1.8.0-openjdk-amd64
+ENV JAVA_HOME           /usr/lib/jvm/java-8-openjdk-amd64/
 
 # Download, build and install Renode
 RUN git clone --quiet https://github.com/renode/renode.git \
