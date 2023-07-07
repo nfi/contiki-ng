@@ -57,8 +57,11 @@
 #endif
 
 #if LEDS_LEGACY_API
-#if LEDS_ALL & LEDS_BLUE || LEDS_ALL & LEDS_RED || LEDS_ALL & LEDS_BLUE
-#define LEDS_CONTROL_NUMBER (((LEDS_ALL & LEDS_BLUE) ? 1 : 0) + ((LEDS_ALL & LEDS_RED) ? 1 : 0) + ((LEDS_ALL & LEDS_GREEN) ? 1 : 0))
+#if LEDS_ALL & (LEDS_BLUE | LEDS_RED | LEDS_GREEN | LEDS_YELLOW)
+#define LEDS_CONTROL_NUMBER (((LEDS_ALL & LEDS_BLUE) ? 1 : 0) +         \
+                             ((LEDS_ALL & LEDS_RED) ? 1 : 0) +          \
+                             ((LEDS_ALL & LEDS_GREEN) ? 1 : 0) +        \
+                             ((LEDS_ALL & LEDS_YELLOW) ? 1 : 0))
 #else
 #define LEDS_CONTROL_NUMBER 1
 #endif
