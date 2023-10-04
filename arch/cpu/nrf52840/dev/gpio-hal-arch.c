@@ -77,7 +77,7 @@ gpio_hal_arch_port_pin_cfg_set(gpio_hal_port_t port, gpio_hal_pin_t pin, gpio_ha
     .hi_accuracy = true,
   };
 
-  uint32_t pin_number = NRF_GPIO_PIN_MAP(port, pin);;
+  uint32_t pin_number = NRF_GPIO_PIN_MAP(port, pin);
 
   tmp = cfg & GPIO_HAL_PIN_CFG_EDGE_BOTH;
   if(tmp == GPIO_HAL_PIN_CFG_EDGE_NONE) {
