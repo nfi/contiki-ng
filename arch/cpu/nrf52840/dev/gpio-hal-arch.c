@@ -164,8 +164,12 @@ gpio_hal_arch_port_pin_cfg_get(gpio_hal_port_t port, gpio_hal_pin_t pin)
 }
 /*---------------------------------------------------------------------------*/
 uint8_t
-gpio_hal_arch_port_read_pin(gpio_hal_port_t port, gpio_hal_pin_t pin) {
-  return (uint8_t)nrf_gpio_pin_read(NRF_GPIO_PIN_MAP(port, pin));
+gpio_hal_arch_port_read_pin(gpio_hal_port_t port, gpio_hal_pin_t pin)
+{
+  uint32_t pin_number = NRF_GPIO_PIN_MAP(port, pin);
+  return nrf_gpio_pin_dir_get(pin_number) == NRF_GPIO_PIN_DIR_OUTPUT
+    ? (uint8_t)nrf_gpio_pin_out_read(pin_number)
+    : (uint8_t)nrf_gpio_pin_read(pin_number);
 }
 /*---------------------------------------------------------------------------*/
 void
@@ -210,7 +214,9 @@ gpio_hal_arch_port_read_pins(gpio_hal_port_t port, gpio_hal_pin_mask_t pins)
     return 0;
   }
 
-  return nrf_gpio_port_in_read(gpio_regs[port]);
+  uint32_t dir = nrf_gpio_port_dir_read(gpio_regs[port]);
+  return (nrf_gpio_port_out_read(gpio_regs[port]) & (pins & dir)) |
+    (nrf_gpio_port_in_read(gpio_regs[port]) & (pins & ~dir));
 }
 /*---------------------------------------------------------------------------*/
 void
