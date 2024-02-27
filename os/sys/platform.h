@@ -118,8 +118,6 @@ extern char **contiki_argv;
 /** The verbosity level of Contiki-NG. */
 extern int flag_verbose;
 
-#define _CONCAT(a, b) a##b
-#define CONCAT(a, b) _CONCAT(a, b)
 #endif /* PLATFORM_MAIN_ACCEPTS_ARGS */
 
 /**
@@ -147,13 +145,13 @@ extern int flag_verbose;
  */
 #if PLATFORM_MAIN_ACCEPTS_ARGS
 #define CONTIKI_OPTION(prio, ...) \
-  static struct callback_option CONCAT(callback_option, __LINE__) = \
+  static struct callback_option CC_CONCAT(callback_option, __LINE__) = \
     { NULL, __VA_ARGS__ }; \
   CC_CONSTRUCTOR((prio)) static void \
-  CONCAT(add_option, __LINE__)(void) \
+  CC_CONCAT(add_option, __LINE__)(void) \
   { \
     void contiki_add_option(struct callback_option *); \
-    contiki_add_option(&CONCAT(callback_option, __LINE__)); \
+    contiki_add_option(&CC_CONCAT(callback_option, __LINE__)); \
   }
 #else
 #define CONTIKI_OPTION(prio, ...)
@@ -168,7 +166,7 @@ extern int flag_verbose;
 #if PLATFORM_MAIN_ACCEPTS_ARGS
 #define CONTIKI_USAGE(prio, msg)      \
   CC_CONSTRUCTOR((prio)) static void \
-  CONCAT(set_usage, __LINE__)(void) \
+  CC_CONCAT(set_usage, __LINE__)(void) \
   { \
     void contiki_set_usage(const char *); \
     contiki_set_usage((msg)); \
@@ -186,7 +184,7 @@ extern int flag_verbose;
 #if PLATFORM_MAIN_ACCEPTS_ARGS
 #define CONTIKI_EXTRA_HELP(prio, msg) \
   CC_CONSTRUCTOR((prio)) static void \
-  CONCAT(set_extra_help, __LINE__)(void) \
+  CC_CONCAT(set_extra_help, __LINE__)(void) \
   { \
     void contiki_set_extra_help(const char *); \
     contiki_set_extra_help((msg)); \
