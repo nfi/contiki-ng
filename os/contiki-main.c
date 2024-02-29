@@ -103,8 +103,11 @@ contiki_add_option(struct contiki_option *option)
 static void
 print_help(void)
 {
-  printf("usage: %s [options]%s", prog, help_usage ? help_usage : "\n");
-  printf("Options are:\n");
+  printf("usage: %s [options]", prog);
+  if(help_usage) {
+    printf(" %s", help_usage);
+  }
+  printf("\n\nOptions are:\n");
   for(struct contiki_option *r = list_head(contiki_options);
       r != NULL; r = r->next) {
     if(!r->help) {
@@ -114,18 +117,18 @@ print_help(void)
     if(r->opt_struct.flag == NULL && r->opt_struct.val) {
       printf("-%c, ", (char)r->opt_struct.val);
     }
-    const char *short_or_long = strlen(r->opt_struct.name) == 1 ? "-" : "--";
-    printf("%s%s", short_or_long, r->opt_struct.name);
+    const char *short_or_long = strlen(r->opt_struct.name) == 1 ? "" : "-";
+    printf("-%s%s", short_or_long, r->opt_struct.name);
 
     int has_arg = r->opt_struct.has_arg;
     if(has_arg != no_argument) {
       printf(has_arg == optional_argument ? " [%s]" : " <%s>",
              r->arg_name ? r->arg_name : "value");
     }
-    printf("\n\t%s", r->help);
+    printf("\n" CONTIKI_HELP_PREFIX "%s\n", r->help);
   }
   if(help_suffix) {
-    printf("%s", help_suffix);
+    printf("%s\n", help_suffix);
   }
 }
 /*---------------------------------------------------------------------------*/
@@ -136,7 +139,7 @@ help_callback(const char *optarg)
   exit(0);
 }
 CONTIKI_OPTION(CONTIKI_MAX_INIT_PRIO + 1, {"help", no_argument, NULL, 'h'},
-               help_callback, "display this help and exit\n");
+               help_callback, "display this help and exit");
 /*---------------------------------------------------------------------------*/
 static int
 parse_argv(int *argc, char ***argv)

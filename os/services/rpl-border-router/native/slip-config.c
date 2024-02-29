@@ -66,8 +66,7 @@ speed_t slip_config_b_rate = BAUDRATE;
 #define CONTIKI_VERBOSE_PRIO CONTIKI_MIN_INIT_PRIO + 10
 #define BAUDRATE_PRIO CONTIKI_VERBOSE_PRIO + 20
 
-CONTIKI_USAGE(300, " ipaddress\n"
-              "example parameters: -L -v=2 -s ttyUSB1 fd00::1/64\n\n");
+CONTIKI_USAGE(300, "<ipaddress>");
 CONTIKI_EXTRA_HELP(300,
                    "\nVerbosity level:\n"
                    "  0   No messages\n"
@@ -75,7 +74,7 @@ CONTIKI_EXTRA_HELP(300,
                    "  2   Printable strings after they are received\n"
                    "  3   Printable strings and SLIP packet notifications\n"
                    "  4   All printable characters as they are received\n"
-                   "  5   All SLIP packets in hex\n");
+                   "  5   All SLIP packets in hex");
 /*---------------------------------------------------------------------------*/
 CC_CONSTRUCTOR(CONTIKI_MIN_INIT_PRIO - 1) static void
 init_slip_config_data(void)
@@ -123,13 +122,13 @@ CONTIKI_OPTION(BAUDRATE_PRIO, {"speed", required_argument, NULL, 'B'},
 #else
                "baudrate (9600,19200,38400,57600,115200)"
 #endif
-               " (default 115200)\n", "baudrate");
+               " (default 115200)", "baudrate");
 CONTIKI_OPTION(BAUDRATE_PRIO + 1,
                {"H", no_argument, &slip_config_flowcontrol, 1}, NULL,
-               "hardware CTS/RTS flow control (default disabled)\n",);
+               "hardware CTS/RTS flow control (default disabled)",);
 CONTIKI_OPTION(BAUDRATE_PRIO + 2,
                {"L", no_argument, &slip_config_timestamp, 1}, NULL,
-               "log output format (adds time stamps)\n",);
+               "log output format (adds time stamps)",);
 static int
 device_callback(const char *optarg)
 {
@@ -137,7 +136,7 @@ device_callback(const char *optarg)
   return 0;
 }
 CONTIKI_OPTION(BAUDRATE_PRIO + 3, {"serial", required_argument, NULL, 's'},
-               device_callback, "serial device (default /dev/ttyUSB0)\n",
+               device_callback, "serial device (default /dev/ttyUSB0)",
                "siodev");
 static int
 host_callback(const char *optarg)
@@ -146,7 +145,7 @@ host_callback(const char *optarg)
   return 0;
 }
 CONTIKI_OPTION(BAUDRATE_PRIO + 4, {"host", required_argument, NULL, 'a'},
-               host_callback, "connect via TCP to specified server\n", "host");
+               host_callback, "connect via TCP to specified server", "host");
 static int
 port_callback(const char *optarg)
 {
@@ -154,7 +153,7 @@ port_callback(const char *optarg)
   return 0;
 }
 CONTIKI_OPTION(BAUDRATE_PRIO + 5, {"port", required_argument, NULL, 'p'},
-               port_callback, "connect via TCP to server on specified port\n",
+               port_callback, "connect via TCP to server on specified port",
                "port");
 static int
 dev_callback(const char *optarg)
@@ -166,7 +165,7 @@ dev_callback(const char *optarg)
   return 0;
 }
 CONTIKI_OPTION(BAUDRATE_PRIO + 6, {"t", required_argument, NULL, 0},
-               dev_callback, "name of interface (default tun0)\n", "tundev");
+               dev_callback, "name of interface (default tun0)", "tundev");
 static int
 delay_callback(const char *optarg)
 {
@@ -182,8 +181,9 @@ delay_callback(const char *optarg)
 CONTIKI_OPTION(BAUDRATE_PRIO + 7, {"d", optional_argument, NULL, 0},
                delay_callback,
                "minimum delay between outgoing SLIP packets (default 10)\n"
-               "\t\tActual delay is basedelay * (#6LowPAN fragments)"
-               " milliseconds.\n", "delay");
+               CONTIKI_HELP_PREFIX
+               "Actual delay is basedelay * (#6LowPAN fragments)"
+               " milliseconds.", "delay");
 /*---------------------------------------------------------------------------*/
 int
 slip_config_handle_arguments(int argc, char **argv)
@@ -207,7 +207,7 @@ verbose_callback(const char *optarg)
   return 0;
 }
 CONTIKI_OPTION(CONTIKI_VERBOSE_PRIO, {"v", optional_argument, NULL, 0},
-               verbose_callback, "verbosity level (0-5)\n", "verbosity");
+               verbose_callback, "verbosity level (0-5)", "verbosity");
 /*---------------------------------------------------------------------------*/
 /* Hidden compatibility options with legacy parameter names. */
 CONTIKI_OPTION(CONTIKI_VERBOSE_PRIO + 1,

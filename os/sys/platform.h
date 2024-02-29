@@ -101,6 +101,8 @@
 #define CONTIKI_MIN_INIT_PRIO 110
 #define CONTIKI_MAX_INIT_PRIO 998
 
+#define CONTIKI_HELP_PREFIX "\t"
+
 struct contiki_option {
   struct contiki_option *next;
   struct option opt_struct;
@@ -133,7 +135,7 @@ extern char **contiki_argv;
  * @code
  *  CONTIKI_OPTION(CONTIKI_VERBOSE_PRIO,
  *                 {"v", optional_argument, NULL, 0}, verbose_callback,
- *                 "verbosity level (0-5)\n", "verbosity");
+ *                 "verbosity level (0-5)", "verbosity");
  * @endcode
  *
  * \param prio Priority. Higher priority will appear later in --help.
