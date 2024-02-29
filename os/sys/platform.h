@@ -103,8 +103,8 @@
 
 #define CONTIKI_MAX_INIT_PRIO 998
 
-struct callback_option {
-  struct callback_option *next;
+struct contiki_option {
+  struct contiki_option *next;
   struct option opt_struct;
   int (*callback)(char *);
   const char *help;
@@ -145,13 +145,13 @@ extern int flag_verbose;
  */
 #if PLATFORM_MAIN_ACCEPTS_ARGS
 #define CONTIKI_OPTION(prio, ...) \
-  static struct callback_option CC_CONCAT(callback_option, __LINE__) = \
+  static struct contiki_option CC_CONCAT(contiki_option, __LINE__) = \
     { NULL, __VA_ARGS__ }; \
   CC_CONSTRUCTOR((prio)) static void \
   CC_CONCAT(add_option, __LINE__)(void) \
   { \
-    void contiki_add_option(struct callback_option *); \
-    contiki_add_option(&CC_CONCAT(callback_option, __LINE__)); \
+    void contiki_add_option(struct contiki_option *); \
+    contiki_add_option(&CC_CONCAT(contiki_option, __LINE__)); \
   }
 #else
 #define CONTIKI_OPTION(prio, ...)

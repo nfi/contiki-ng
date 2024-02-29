@@ -91,7 +91,7 @@ contiki_set_extra_help(const char *msg)
 }
 /*---------------------------------------------------------------------------*/
 void
-contiki_add_option(struct callback_option *option)
+contiki_add_option(struct contiki_option *option)
 {
   static bool initialized = false;
   if(!initialized) {
@@ -106,7 +106,7 @@ print_help(void)
 {
   printf("usage: %s [options]%s", prog, help_usage ? help_usage : "\n");
   printf("Options are:\n");
-  for(struct callback_option *r = list_head(contiki_options);
+  for(struct contiki_option *r = list_head(contiki_options);
       r != NULL; r = r->next) {
     if(!r->help) {
       continue;
@@ -152,14 +152,14 @@ parse_argv(int *argc, char ***argv)
 {
   prog = *argv[0];
   const int num_options = list_length(contiki_options);
-  struct callback_option options[num_options];
+  struct contiki_option options[num_options];
   struct option long_options[num_options + 1];
 
   int i = 0;
-  for(struct callback_option *r = list_head(contiki_options);
+  for(struct contiki_option *r = list_head(contiki_options);
       r != NULL; ++i, r = r->next) {
     memcpy(&long_options[i], &r->opt_struct, sizeof(struct option));
-    memcpy(&options[i], r, sizeof(struct callback_option));
+    memcpy(&options[i], r, sizeof(struct contiki_option));
   }
   /* Null terminate options. */
   memset(&long_options[i], 0, sizeof(struct option));
