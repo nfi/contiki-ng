@@ -73,7 +73,6 @@ char **contiki_argv;
 #include "lib/list.h"
 
 LIST(contiki_options);
-int flag_verbose;
 static const char *prog;
 static const char *help_usage;
 static const char *help_suffix;
@@ -129,20 +128,6 @@ print_help(void)
     printf("%s", help_suffix);
   }
 }
-/*---------------------------------------------------------------------------*/
-static int
-verbose_callback(const char *optarg)
-{
-  flag_verbose = optarg ? atoi(optarg) : 3;
-  if(flag_verbose < 0 || flag_verbose > 5 ||
-     (flag_verbose == 0 && optarg && optarg[0] != '0')) {
-    fprintf(stderr, "Verbose level '%s' not between 0 and 5\n", optarg);
-    return 1;
-  }
-  return 0;
-}
-CONTIKI_OPTION(CONTIKI_VERBOSE_PRIO, {"v", optional_argument, NULL, 0},
-               verbose_callback, "verbosity level (0-5)\n", "verbosity");
 /*---------------------------------------------------------------------------*/
 CC_NORETURN static int
 help_callback(const char *optarg)

@@ -48,6 +48,7 @@
 #include "contiki.h"
 #include "sys/platform.h"
 
+int slip_config_verbose;
 const char *slip_config_ipaddr;
 int slip_config_flowcontrol = 0;
 int slip_config_timestamp = 0;
@@ -62,6 +63,7 @@ uint16_t slip_config_basedelay = 0;
 #endif
 speed_t slip_config_b_rate = BAUDRATE;
 
+#define CONTIKI_VERBOSE_PRIO CONTIKI_MIN_INIT_PRIO + 10
 #define BAUDRATE_PRIO CONTIKI_VERBOSE_PRIO + 20
 
 CONTIKI_USAGE(300, " ipaddress\n"
@@ -193,16 +195,30 @@ slip_config_handle_arguments(int argc, char **argv)
   return 1;
 }
 /*---------------------------------------------------------------------------*/
+static int
+verbose_callback(const char *optarg)
+{
+  slip_config_verbose = optarg ? atoi(optarg) : 3;
+  if(slip_config_verbose < 0 || slip_config_verbose > 5 ||
+     (slip_config_verbose == 0 && optarg && optarg[0] != '0')) {
+    fprintf(stderr, "Verbose level '%s' not between 0 and 5\n", optarg);
+    return 1;
+  }
+  return 0;
+}
+CONTIKI_OPTION(CONTIKI_VERBOSE_PRIO, {"v", optional_argument, NULL, 0},
+               verbose_callback, "verbosity level (0-5)\n", "verbosity");
+/*---------------------------------------------------------------------------*/
 /* Hidden compatibility options with legacy parameter names. */
 CONTIKI_OPTION(CONTIKI_VERBOSE_PRIO + 1,
-               {"v0", no_argument, &flag_verbose, 0}, NULL, NULL,);
+               {"v0", no_argument, &slip_config_verbose, 0}, NULL, NULL,);
 CONTIKI_OPTION(CONTIKI_VERBOSE_PRIO + 2,
-               {"v1", no_argument, &flag_verbose, 1}, NULL, NULL,);
+               {"v1", no_argument, &slip_config_verbose, 1}, NULL, NULL,);
 CONTIKI_OPTION(CONTIKI_VERBOSE_PRIO + 3,
-               {"v2", no_argument, &flag_verbose, 2}, NULL, NULL,);
+               {"v2", no_argument, &slip_config_verbose, 2}, NULL, NULL,);
 CONTIKI_OPTION(CONTIKI_VERBOSE_PRIO + 4,
-               {"v3", no_argument, &flag_verbose, 3}, NULL, NULL,);
+               {"v3", no_argument, &slip_config_verbose, 3}, NULL, NULL,);
 CONTIKI_OPTION(CONTIKI_VERBOSE_PRIO + 5,
-               {"v4", no_argument, &flag_verbose, 4}, NULL, NULL,);
+               {"v4", no_argument, &slip_config_verbose, 4}, NULL, NULL,);
 CONTIKI_OPTION(CONTIKI_VERBOSE_PRIO + 6,
-               {"v5", no_argument, &flag_verbose, 5}, NULL, NULL,);
+               {"v5", no_argument, &slip_config_verbose, 5}, NULL, NULL,);

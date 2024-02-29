@@ -99,8 +99,6 @@
 #include <getopt.h>
 
 #define CONTIKI_MIN_INIT_PRIO 110
-#define CONTIKI_VERBOSE_PRIO 120
-
 #define CONTIKI_MAX_INIT_PRIO 998
 
 struct contiki_option {
@@ -115,10 +113,6 @@ struct contiki_option {
 extern int contiki_argc;
 /** A global argv, after parsing command line options. */
 extern char **contiki_argv;
-
-/** The verbosity level of Contiki-NG. */
-extern int flag_verbose;
-
 #endif /* PLATFORM_MAIN_ACCEPTS_ARGS */
 
 /**
