@@ -82,7 +82,7 @@ init_slip_config_data(void)
 }
 /*---------------------------------------------------------------------------*/
 static int
-baudrate_callback(char *optarg)
+baudrate_callback(const char *optarg)
 {
   int baudrate = atoi(optarg);
   switch(baudrate) {
@@ -129,7 +129,7 @@ CONTIKI_OPTION(BAUDRATE_PRIO + 2,
                {"L", no_argument, &slip_config_timestamp, 1}, NULL,
                "log output format (adds time stamps)\n");
 static int
-device_callback(char *optarg)
+device_callback(const char *optarg)
 {
   slip_config_siodev = optarg + (strncmp("/dev/", optarg, 5) == 0 ? 5 : 0);
   return 0;
@@ -137,7 +137,7 @@ device_callback(char *optarg)
 CONTIKI_OPTION(BAUDRATE_PRIO + 3, {"s", required_argument, NULL, 0},
                device_callback, "serial device (default /dev/ttyUSB0)\n");
 static int
-host_callback(char *optarg)
+host_callback(const char *optarg)
 {
   slip_config_host = optarg;
   return 0;
@@ -145,7 +145,7 @@ host_callback(char *optarg)
 CONTIKI_OPTION(BAUDRATE_PRIO + 4, {"a", required_argument, NULL, 0},
                host_callback, "connect via TCP to server at <value>\n");
 static int
-port_callback(char *optarg)
+port_callback(const char *optarg)
 {
   slip_config_port = optarg;
   return 0;
@@ -153,7 +153,7 @@ port_callback(char *optarg)
 CONTIKI_OPTION(BAUDRATE_PRIO + 5, {"p", required_argument, NULL, 0},
                port_callback, "connect via TCP to server on port <value>\n");
 static int
-dev_callback(char *optarg)
+dev_callback(const char *optarg)
 {
   strncpy(slip_config_tundev,
           optarg + (strncmp("/dev/", optarg, 5) == 0 ? 5 : 0),
@@ -164,7 +164,7 @@ dev_callback(char *optarg)
 CONTIKI_OPTION(BAUDRATE_PRIO + 6, {"t", required_argument, NULL, 0},
                dev_callback, "name of interface (default tun0)\n");
 static int
-delay_callback(char *optarg)
+delay_callback(const char *optarg)
 {
   slip_config_basedelay = optarg ? atoi(optarg) : 10;
   if(slip_config_basedelay < 0 ||

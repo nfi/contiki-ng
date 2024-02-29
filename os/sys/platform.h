@@ -106,7 +106,7 @@
 struct contiki_option {
   struct contiki_option *next;
   struct option opt_struct;
-  int (*callback)(char *);
+  int (*callback)(const char *);
   const char *help;
 };
 

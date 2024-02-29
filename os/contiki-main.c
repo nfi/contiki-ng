@@ -125,7 +125,7 @@ print_help(void)
 }
 /*---------------------------------------------------------------------------*/
 static int
-verbose_callback(char *optarg)
+verbose_callback(const char *optarg)
 {
   flag_verbose = optarg ? atoi(optarg) : 3;
   if(flag_verbose < 0 || flag_verbose > 5 ||
@@ -139,7 +139,7 @@ CONTIKI_OPTION(CONTIKI_VERBOSE_PRIO, {"v", optional_argument, NULL, 0},
                verbose_callback, "verbosity level (0-5)\n");
 /*---------------------------------------------------------------------------*/
 CC_NORETURN static int
-help_callback(char *optarg)
+help_callback(const char *optarg)
 {
   print_help();
   exit(0);
