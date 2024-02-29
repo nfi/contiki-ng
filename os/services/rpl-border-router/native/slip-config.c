@@ -187,7 +187,7 @@ int
 slip_config_handle_arguments(int argc, char **argv)
 {
   if(argc != 2 && argc != 3) {
-    err(1, "usage: %s [-B baudrate] [-H] [-L] [-s siodev] [-t tundev] [-T] [-v verbosity] [-d delay] [-a serveraddress] [-p serverport] ipaddress", argv[0]);
+    err(1, "usage: %s [options] <ipaddress>", argv[0]);
   }
   slip_config_ipaddr = argv[1];
   return 1;
