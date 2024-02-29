@@ -114,44 +114,46 @@ baudrate_callback(const char *optarg)
   }
   return 0;
 }
-CONTIKI_OPTION(BAUDRATE_PRIO, {"B", required_argument, NULL, 0},
+CONTIKI_OPTION(BAUDRATE_PRIO, {"speed", required_argument, NULL, 'B'},
                baudrate_callback,
 #ifdef linux
                "baudrate (9600,19200,38400,57600,115200,921600)"
 #else
                "baudrate (9600,19200,38400,57600,115200)"
 #endif
-               " (default 115200)\n");
+               " (default 115200)\n", "baudrate");
 CONTIKI_OPTION(BAUDRATE_PRIO + 1,
                {"H", no_argument, &slip_config_flowcontrol, 1}, NULL,
-               "hardware CTS/RTS flow control (default disabled)\n");
+               "hardware CTS/RTS flow control (default disabled)\n",);
 CONTIKI_OPTION(BAUDRATE_PRIO + 2,
                {"L", no_argument, &slip_config_timestamp, 1}, NULL,
-               "log output format (adds time stamps)\n");
+               "log output format (adds time stamps)\n",);
 static int
 device_callback(const char *optarg)
 {
   slip_config_siodev = optarg + (strncmp("/dev/", optarg, 5) == 0 ? 5 : 0);
   return 0;
 }
-CONTIKI_OPTION(BAUDRATE_PRIO + 3, {"s", required_argument, NULL, 0},
-               device_callback, "serial device (default /dev/ttyUSB0)\n");
+CONTIKI_OPTION(BAUDRATE_PRIO + 3, {"serial", required_argument, NULL, 's'},
+               device_callback, "serial device (default /dev/ttyUSB0)\n",
+               "siodev");
 static int
 host_callback(const char *optarg)
 {
   slip_config_host = optarg;
   return 0;
 }
-CONTIKI_OPTION(BAUDRATE_PRIO + 4, {"a", required_argument, NULL, 0},
-               host_callback, "connect via TCP to server at <value>\n");
+CONTIKI_OPTION(BAUDRATE_PRIO + 4, {"host", required_argument, NULL, 'a'},
+               host_callback, "connect via TCP to specified server\n", "host");
 static int
 port_callback(const char *optarg)
 {
   slip_config_port = optarg;
   return 0;
 }
-CONTIKI_OPTION(BAUDRATE_PRIO + 5, {"p", required_argument, NULL, 0},
-               port_callback, "connect via TCP to server on port <value>\n");
+CONTIKI_OPTION(BAUDRATE_PRIO + 5, {"port", required_argument, NULL, 'p'},
+               port_callback, "connect via TCP to server on specified port\n",
+               "port");
 static int
 dev_callback(const char *optarg)
 {
@@ -162,7 +164,7 @@ dev_callback(const char *optarg)
   return 0;
 }
 CONTIKI_OPTION(BAUDRATE_PRIO + 6, {"t", required_argument, NULL, 0},
-               dev_callback, "name of interface (default tun0)\n");
+               dev_callback, "name of interface (default tun0)\n", "tundev");
 static int
 delay_callback(const char *optarg)
 {
@@ -179,7 +181,7 @@ CONTIKI_OPTION(BAUDRATE_PRIO + 7, {"d", optional_argument, NULL, 0},
                delay_callback,
                "minimum delay between outgoing SLIP packets (default 10)\n"
                "\t\tActual delay is basedelay * (#6LowPAN fragments)"
-               " milliseconds.\n");
+               " milliseconds.\n", "delay");
 /*---------------------------------------------------------------------------*/
 int
 slip_config_handle_arguments(int argc, char **argv)
@@ -193,14 +195,14 @@ slip_config_handle_arguments(int argc, char **argv)
 /*---------------------------------------------------------------------------*/
 /* Hidden compatibility options with legacy parameter names. */
 CONTIKI_OPTION(CONTIKI_VERBOSE_PRIO + 1,
-               {"v0", no_argument, &flag_verbose, 0}, NULL, NULL);
+               {"v0", no_argument, &flag_verbose, 0}, NULL, NULL,);
 CONTIKI_OPTION(CONTIKI_VERBOSE_PRIO + 2,
-               {"v1", no_argument, &flag_verbose, 1}, NULL, NULL);
+               {"v1", no_argument, &flag_verbose, 1}, NULL, NULL,);
 CONTIKI_OPTION(CONTIKI_VERBOSE_PRIO + 3,
-               {"v2", no_argument, &flag_verbose, 2}, NULL, NULL);
+               {"v2", no_argument, &flag_verbose, 2}, NULL, NULL,);
 CONTIKI_OPTION(CONTIKI_VERBOSE_PRIO + 4,
-               {"v3", no_argument, &flag_verbose, 3}, NULL, NULL);
+               {"v3", no_argument, &flag_verbose, 3}, NULL, NULL,);
 CONTIKI_OPTION(CONTIKI_VERBOSE_PRIO + 5,
-               {"v4", no_argument, &flag_verbose, 4}, NULL, NULL);
+               {"v4", no_argument, &flag_verbose, 4}, NULL, NULL,);
 CONTIKI_OPTION(CONTIKI_VERBOSE_PRIO + 6,
-               {"v5", no_argument, &flag_verbose, 5}, NULL, NULL);
+               {"v5", no_argument, &flag_verbose, 5}, NULL, NULL,);

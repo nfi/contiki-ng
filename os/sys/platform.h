@@ -108,6 +108,7 @@ struct contiki_option {
   struct option opt_struct;
   int (*callback)(const char *);
   const char *help;
+  const char *arg_name;
 };
 
 /** A global argc, after parsing command line options. */
@@ -138,7 +139,7 @@ extern int flag_verbose;
  * @code
  *  CONTIKI_OPTION(CONTIKI_VERBOSE_PRIO,
  *                 {"v", optional_argument, NULL, 0}, verbose_callback,
-                   "verbosity level (0-5)\n");
+ *                 "verbosity level (0-5)\n", "verbosity");
  * @endcode
  *
  * \param prio Priority. Higher priority will appear later in --help.

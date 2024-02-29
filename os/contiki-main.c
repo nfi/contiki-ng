@@ -111,16 +111,19 @@ print_help(void)
     if(!r->help) {
       continue;
     }
-    int has_arg = r->opt_struct.has_arg;
-    const char *arg_desc = has_arg == no_argument ? "" :
-      has_arg == optional_argument ? " [value]" : " <value>";
     printf("  ");
     if(r->opt_struct.flag == NULL && r->opt_struct.val) {
       printf("-%c, ", (char)r->opt_struct.val);
     }
-    const char *short_command = strlen(r->opt_struct.name) == 1 ? "" : "-";
-    printf(" %s%s%s\n", short_command, r->opt_struct.name, arg_desc);
-    printf("\t%s", r->help);
+    const char *short_or_long = strlen(r->opt_struct.name) == 1 ? "-" : "--";
+    printf("%s%s", short_or_long, r->opt_struct.name);
+
+    int has_arg = r->opt_struct.has_arg;
+    if(has_arg != no_argument) {
+      printf(has_arg == optional_argument ? " [%s]" : " <%s>",
+             r->arg_name ? r->arg_name : "value");
+    }
+    printf("\n\t%s", r->help);
   }
   if(help_suffix) {
     printf("%s", help_suffix);
@@ -139,7 +142,7 @@ verbose_callback(const char *optarg)
   return 0;
 }
 CONTIKI_OPTION(CONTIKI_VERBOSE_PRIO, {"v", optional_argument, NULL, 0},
-               verbose_callback, "verbosity level (0-5)\n");
+               verbose_callback, "verbosity level (0-5)\n", "verbosity");
 /*---------------------------------------------------------------------------*/
 CC_NORETURN static int
 help_callback(const char *optarg)
