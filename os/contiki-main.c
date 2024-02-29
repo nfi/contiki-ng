@@ -113,11 +113,14 @@ print_help(void)
     }
     int has_arg = r->opt_struct.has_arg;
     const char *arg_desc = has_arg == no_argument ? "" :
-      has_arg == optional_argument ? "[=value]" : " value  ";
-    printf(" --%s%s%s\t%s", r->opt_struct.name, arg_desc,
-           /* Insert extra tab for short option names. */
-           3 + strlen(r->opt_struct.name) + strlen(arg_desc) < 8 ? "\t" : "",
-           r->help);
+      has_arg == optional_argument ? " [value]" : " <value>";
+    printf("  ");
+    if(r->opt_struct.flag == NULL && r->opt_struct.val) {
+      printf("-%c, ", (char)r->opt_struct.val);
+    }
+    const char *short_command = strlen(r->opt_struct.name) == 1 ? "" : "-";
+    printf(" %s%s%s\n", short_command, r->opt_struct.name, arg_desc);
+    printf("\t%s", r->help);
   }
   if(help_suffix) {
     printf("%s", help_suffix);
@@ -144,7 +147,7 @@ help_callback(const char *optarg)
   print_help();
   exit(0);
 }
-CONTIKI_OPTION(CONTIKI_MAX_INIT_PRIO + 1, {"help", no_argument, NULL, 0},
+CONTIKI_OPTION(CONTIKI_MAX_INIT_PRIO + 1, {"help", no_argument, NULL, 'h'},
                help_callback, "display this help and exit\n");
 /*---------------------------------------------------------------------------*/
 static int
