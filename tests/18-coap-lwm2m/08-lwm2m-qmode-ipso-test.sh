@@ -9,7 +9,7 @@ IPADDR=fd00::302:304:506:708
 
 # Starting Contiki-NG native node
 echo "Starting native node - lwm2m/ipso objects with Q-Mode"
-sudo $CONTIKI/examples/lwm2m-ipso-objects/example-ipso-objects.native &
+sudo $CONTIKI/examples/lwm2m-ipso-objects/example-ipso-objects.native --pcap $BASENAME.pcap &
 CPID=$!
 
 echo "Downloading leshan with Q-Mode support"
@@ -52,4 +52,3 @@ else
 fi
 
 rm -f leshan.log leshan.err
-
