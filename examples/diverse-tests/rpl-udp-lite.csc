@@ -17,7 +17,7 @@
     <motetype>
       org.contikios.cooja.contikimote.ContikiMoteType
       <description>Cooja Mote Type #1</description>
-      <source>[CONFIG_DIR]/rpl-lite/udp-server.c</source>
+      <source>[CONFIG_DIR]/code-ipv6/rpl-lite/udp-server.c</source>
       <commands>$(MAKE) -j$(CPUS) udp-server.cooja TARGET=cooja</commands>
       <moteinterface>org.contikios.cooja.interfaces.Position</moteinterface>
       <moteinterface>org.contikios.cooja.interfaces.Battery</moteinterface>
@@ -49,7 +49,7 @@
     <motetype>
       org.contikios.cooja.contikimote.ContikiMoteType
       <description>UDP RPL Lite Client</description>
-      <source>[CONFIG_DIR]/rpl-lite/udp-client.c</source>
+      <source>[CONFIG_DIR]/code-ipv6/rpl-lite/udp-client.c</source>
       <commands>$(MAKE) -j$(CPUS) udp-client.cooja TARGET=cooja</commands>
       <moteinterface>org.contikios.cooja.interfaces.Position</moteinterface>
       <moteinterface>org.contikios.cooja.interfaces.Battery</moteinterface>
