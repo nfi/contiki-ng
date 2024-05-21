@@ -1,3 +1,6 @@
+/* timeout in milliseconds */
+TIMEOUT(3600000, log.testOK());
+
 function setTcpPort() {
     var tcp_port = getRandomPort("server");
     var motes = sim.getMotes();

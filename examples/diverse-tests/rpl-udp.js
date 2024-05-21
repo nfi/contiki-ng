@@ -1,3 +1,6 @@
+/* timeout in milliseconds */
+TIMEOUT(3600000, log.testOK());
+
 /* udp client/server */
 
 var server_port = getRandomPort("server");

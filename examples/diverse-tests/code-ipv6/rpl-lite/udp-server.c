@@ -73,17 +73,31 @@ PROCESS_THREAD(udp_server_process, ev, data)
   /* Initialize DAG root */
   NETSTACK_ROUTING.root_start();
 
-  while(udp_server_port == 0 || udp_client_port == 0) {
-    etimer_set(&timer, CLOCK_SECOND / 10);
-    PROCESS_WAIT_EVENT();
+  for(;;) {
+    while(udp_server_port == 0 || udp_client_port == 0) {
+      etimer_set(&timer, CLOCK_SECOND / 10);
+      PROCESS_WAIT_EVENT();
+    }
+
+    LOG_INFO("Server started with server port %u and client port %u\n",
+             udp_server_port, udp_client_port);
+
+    /* Initialize UDP connection */
+    simple_udp_register(&udp_conn, udp_server_port, NULL,
+                        udp_client_port, udp_rx_callback);
+
+    for(;;) {
+      etimer_set(&timer, CLOCK_SECOND * 2);
+      PROCESS_WAIT_EVENT();
+      if(udp_server_port == 0 || udp_client_port == 0) {
+        LOG_INFO("Port change detected!\n");
+        etimer_set(&timer, CLOCK_SECOND);
+        PROCESS_WAIT_EVENT();
+        simple_udp_unregister(&udp_conn);
+        break;
+      }
+    }
   }
-
-  LOG_INFO("Server started with server port %u and client port %u\n",
-           udp_server_port, udp_client_port);
-
-  /* Initialize UDP connection */
-  simple_udp_register(&udp_conn, udp_server_port, NULL,
-                      udp_client_port, udp_rx_callback);
 
   PROCESS_END();
 }

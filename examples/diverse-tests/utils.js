@@ -1,6 +1,3 @@
-/* timeout in milliseconds */
-TIMEOUT(3600000, log.testOK());
-
 var verbose = false;
 var protocols = [20, 21, 22, 23, 53, 80, 123, 161, 443, 546, 5457, 1900, 5222, 5223, 5269, 5298, 5353, 5683, 5684, 5671, 5672, 1883,8882, 8883];
 var random = new java.util.Random(sim.getRandomSeed());

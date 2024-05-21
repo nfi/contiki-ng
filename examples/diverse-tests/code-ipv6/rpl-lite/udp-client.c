@@ -14,7 +14,7 @@
 uint16_t udp_client_port = 0; 	/* 8765 */
 uint16_t udp_server_port = 0; 	/* 5678 */
 
-#define SEND_INTERVAL		  (30 * CLOCK_SECOND)
+#define SEND_INTERVAL		  (10 * CLOCK_SECOND)
 
 static struct simple_udp_connection udp_conn;
 static uint32_t rx_count = 0;
@@ -51,59 +51,67 @@ PROCESS_THREAD(udp_client_process, ev, data)
 
   PROCESS_BEGIN();
 
-  while(udp_server_port == 0 || udp_client_port == 0) {
-    etimer_set(&periodic_timer, CLOCK_SECOND / 10);
-    PROCESS_WAIT_EVENT();
-  }
+  for(;;) {
+    while(udp_server_port == 0 || udp_client_port == 0) {
+      etimer_set(&periodic_timer, CLOCK_SECOND / 10);
+      PROCESS_WAIT_EVENT();
+    }
 
-  LOG_INFO("Client started with server port %u and client port %u\n",
-           udp_server_port, udp_client_port);
+    LOG_INFO("Client started with server port %u and client port %u\n",
+             udp_server_port, udp_client_port);
 
-  /* Initialize UDP connection */
-  simple_udp_register(&udp_conn, udp_client_port, NULL,
-                      udp_server_port, udp_rx_callback);
+    /* Initialize UDP connection */
+    simple_udp_register(&udp_conn, udp_client_port, NULL,
+                        udp_server_port, udp_rx_callback);
 
-  etimer_set(&periodic_timer, random_rand() % SEND_INTERVAL);
-  while(1) {
-    PROCESS_WAIT_EVENT_UNTIL(etimer_expired(&periodic_timer));
+    etimer_set(&periodic_timer, random_rand() % SEND_INTERVAL);
+    while(1) {
+      PROCESS_WAIT_EVENT_UNTIL(etimer_expired(&periodic_timer));
 
-    if(NETSTACK_ROUTING.node_is_reachable() &&
-        NETSTACK_ROUTING.get_root_ipaddr(&dest_ipaddr)) {
-
-      /* Print statistics every 10th TX */
-      if(tx_count % 10 == 0) {
-        LOG_INFO("Tx/Rx/MissedTx: %" PRIu32 "/%" PRIu32 "/%" PRIu32 "\n",
-                 tx_count, rx_count, missed_tx_count);
+      if(udp_server_port == 0 || udp_client_port == 0) {
+        LOG_INFO("Port change detected!\n");
+        simple_udp_unregister(&udp_conn);
+        break;
       }
+
+      if(NETSTACK_ROUTING.node_is_reachable() &&
+         NETSTACK_ROUTING.get_root_ipaddr(&dest_ipaddr)) {
+
+        /* Print statistics every 10th TX */
+        if(tx_count % 10 == 0) {
+          LOG_INFO("Tx/Rx/MissedTx: %" PRIu32 "/%" PRIu32 "/%" PRIu32 "\n",
+                   tx_count, rx_count, missed_tx_count);
+        }
 
 #if UIP_BUFSIZE < 1200
 #error Too small UIP buffer
 #endif
-      char *buf = (char *)&uip_buf[UIP_IPUDPH_LEN];
+        char *buf = (char *)&uip_buf[UIP_IPUDPH_LEN];
 
-      uipbuf_clear();
-      snprintf(buf, UIP_BUFSIZE - UIP_IPUDPH_LEN - 1,
-               "hello %" PRIu32 "", tx_count);
-      uint16_t payload_len = MAX(strlen(buf) + 1, random_rand() % 1024);
-      for(int i = strlen(buf) + 2; i < payload_len; i++) {
-        buf[i] = (char)(random_rand() & 0xff);
+        uipbuf_clear();
+        snprintf(buf, UIP_BUFSIZE - UIP_IPUDPH_LEN - 1,
+                 "hello %" PRIu32 "", tx_count);
+        uint16_t payload_len = MAX(strlen(buf) + 1, random_rand() % 1024);
+        for(int i = strlen(buf) + 2; i < payload_len; i++) {
+          buf[i] = (char)(random_rand() & 0xff);
+        }
+        /* Send to DAG root */
+        LOG_INFO("Sending request %"PRIu32" to ", tx_count);
+        LOG_INFO_6ADDR(&dest_ipaddr);
+        LOG_INFO_(" (%u bytes)\n", payload_len);
+        simple_udp_sendto(&udp_conn, buf, payload_len, &dest_ipaddr);
+        tx_count++;
+      } else {
+        LOG_INFO("Not reachable yet\n");
+        if(tx_count > 0) {
+          missed_tx_count++;
+        }
       }
-      /* Send to DAG root */
-      LOG_INFO("Sending request %"PRIu32" to ", tx_count);
-      LOG_INFO_6ADDR(&dest_ipaddr);
-      LOG_INFO_(" (%u bytes)\n", payload_len);
-      simple_udp_sendto(&udp_conn, buf, payload_len, &dest_ipaddr);
-      tx_count++;
-    } else {
-      LOG_INFO("Not reachable yet\n");
-      if(tx_count > 0) {
-        missed_tx_count++;
-      }
+
+      /* Add some jitter */
+      etimer_set(&periodic_timer, SEND_INTERVAL
+                 - CLOCK_SECOND + (random_rand() % (2 * CLOCK_SECOND)));
     }
-
-    /* Add some jitter */
-    etimer_set(&periodic_timer, SEND_INTERVAL
-      - CLOCK_SECOND + (random_rand() % (2 * CLOCK_SECOND)));
   }
 
   PROCESS_END();
