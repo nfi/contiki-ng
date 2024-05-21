@@ -129,6 +129,16 @@ simple_udp_register(struct simple_udp_connection *c,
   return 1;
 }
 /*---------------------------------------------------------------------------*/
+int
+simple_udp_unregister(struct simple_udp_connection *c)
+{
+  if(c && c->udp_conn) {
+    uip_udp_remove(c->udp_conn);
+    return 1;
+  }
+  return 0;
+}
+/*---------------------------------------------------------------------------*/
 PROCESS_THREAD(simple_udp_process, ev, data)
 {
   struct simple_udp_connection *c;

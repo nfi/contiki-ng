@@ -105,6 +105,18 @@ int simple_udp_register(struct simple_udp_connection *c,
                         simple_udp_callback receive_callback);
 
 /**
+ * \brief      Unregister a UDP connection
+ * \param c    A pointer to a struct simple_udp_connection,
+ *             previosly registered using simple_udp_register()
+ * \retval 0   If no UDP connection could be unregistered
+ * \retval 1   If the connection was successfully unregistered.
+ *
+ *     This function unregisters a UDP connection.
+ *
+ */
+int simple_udp_unregister(struct simple_udp_connection *c);
+
+/**
  * \brief      Send a UDP packet
  * \param c    A pointer to a struct simple_udp_connection
  * \param data A pointer to the data to be sent
