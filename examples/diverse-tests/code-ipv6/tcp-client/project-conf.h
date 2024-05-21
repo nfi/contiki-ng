@@ -1,0 +1,9 @@
+#define UIP_CONF_TCP 1
+
+#define UIP_CONF_ND6_SEND_NS 1
+
+#define LOG_CONF_LEVEL_RPL              LOG_LEVEL_WARN
+
+#ifdef BUFSIZE
+#define UIP_CONF_BUFFER_SIZE BUFSIZE
+#endif /* BUFSIZE */
