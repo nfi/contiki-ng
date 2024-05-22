@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <simconf version="2023090101">
   <simulation>
-    <title>TCP socket test</title>
+    <title>TCP socket test with one continuous stream</title>
     <randomseed>generated</randomseed>
     <motedelay_us>1000000</motedelay_us>
     <radiomedium>
@@ -49,8 +49,8 @@
     <motetype>
       org.contikios.cooja.contikimote.ContikiMoteType
       <description>Client</description>
-      <source>[CONFIG_DIR]/code-ipv6/tcp-client/tcp-client.c</source>
-      <commands>$(MAKE) -j$(CPUS) tcp-client.cooja TARGET=cooja</commands>
+      <source>[CONFIG_DIR]/code-ipv6/tcp-client/tcp-client-stream.c</source>
+      <commands>$(MAKE) -j$(CPUS) tcp-client-stream.cooja TARGET=cooja</commands>
       <moteinterface>org.contikios.cooja.interfaces.Position</moteinterface>
       <moteinterface>org.contikios.cooja.interfaces.Battery</moteinterface>
       <moteinterface>org.contikios.cooja.contikimote.interfaces.ContikiVib</moteinterface>
@@ -92,7 +92,7 @@
     org.contikios.cooja.plugins.ScriptRunner
     <plugin_config>
       <scriptfile>[CONFIG_DIR]/utils.js</scriptfile>
-      <scriptfile>[CONFIG_DIR]/ipv6-tcp.js</scriptfile>
+      <scriptfile>[CONFIG_DIR]/ipv6-tcp-stream.js</scriptfile>
       <active>true</active>
     </plugin_config>
     <bounds x="676" y="406" height="557" width="600" />

@@ -4,6 +4,7 @@
 * rpl-udp-classic.csc - UDP data collection using RPL Classic with storing mode, 20 nodes, random port at startup, random payload sizes.
 * rpl-udp-lite-varying.csc - UDP data collection using RPL Lite with non-storing mode, 20 nodes, periodic random port, random payload sizes.
 * ipv6-tcp-sockets.csc - TCP transfer between two nodes using RPL Lite, random port and payload size for each TCP stream.
+* ipv6-tcp-sockets-stream.csc - TCP transfer between two nodes using RPL Lite, MQTT port and varying packets sizes in one continuous TCP stream.
 
 ## Randomly selected ports for communication
 
