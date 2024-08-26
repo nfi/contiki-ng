@@ -47,15 +47,14 @@
 #include <sys/ioctl.h>
 #include <err.h>
 #include "contiki.h"
+#include "tun6-net.h"
 
 int slip_config_verbose = 0;
-const char *slip_config_ipaddr;
 int slip_config_flowcontrol = 0;
 int slip_config_timestamp = 0;
 const char *slip_config_siodev = NULL;
 const char *slip_config_host = NULL;
 const char *slip_config_port = NULL;
-char slip_config_tundev[IFNAMSIZ + 1] = { "" };
 uint16_t slip_config_basedelay = 0;
 
 #ifndef BAUDRATE
@@ -97,12 +96,7 @@ slip_config_handle_arguments(int argc, char **argv)
       break;
 
     case 't':
-      if(strncmp("/dev/", optarg, 5) == 0) {
-        strncpy(slip_config_tundev, optarg + 5, sizeof(slip_config_tundev) - 1);
-      } else {
-        strncpy(slip_config_tundev, optarg, sizeof(slip_config_tundev) - 1);
-      }
-      slip_config_tundev[sizeof(slip_config_tundev) - 1] = '\0';
+      tun6_net_set_tun_name(optarg);
       break;
 
     case 'a':
@@ -171,7 +165,7 @@ slip_config_handle_arguments(int argc, char **argv)
   if(argc != 2 && argc != 3) {
     err(1, "usage: %s [-B baudrate] [-H] [-L] [-s siodev] [-t tundev] [-T] [-v verbosity] [-d delay] [-a serveraddress] [-p serverport] ipaddress", prog);
   }
-  slip_config_ipaddr = argv[1];
+  tun6_net_set_prefix(argv[1]);
 
   switch(baudrate) {
   case -2:
@@ -201,10 +195,6 @@ slip_config_handle_arguments(int argc, char **argv)
     break;
   }
 
-  if(*slip_config_tundev == '\0') {
-    /* Use default. */
-    strcpy(slip_config_tundev, "tun0");
-  }
   return 1;
 }
 /*---------------------------------------------------------------------------*/
