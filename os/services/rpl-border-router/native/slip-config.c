@@ -69,6 +69,8 @@ slip_config_handle_arguments(int argc, char **argv)
   const char *prog;
   int c;
   int baudrate = 115200;
+  int default_mtu = tun6_net_get_mtu();
+  const char *default_tun = tun6_net_get_tun_name();
 
   slip_config_verbose = 0;
 
@@ -97,6 +99,10 @@ slip_config_handle_arguments(int argc, char **argv)
 
     case 't':
       tun6_net_set_tun_name(optarg);
+      break;
+
+    case 'M':
+      tun6_net_set_mtu(atoi(optarg));
       break;
 
     case 'a':
@@ -137,7 +143,8 @@ slip_config_handle_arguments(int argc, char **argv)
       fprintf(stderr, " -s siodev      Serial device (default /dev/ttyUSB0)\n");
       fprintf(stderr, " -a host        Connect via TCP to server at <host>\n");
       fprintf(stderr, " -p port        Connect via TCP to server at <host>:<port>\n");
-      fprintf(stderr, " -t tundev      Name of interface (default tun0)\n");
+      fprintf(stderr, " -t tundev      Name of interface (default %s)\n", default_tun);
+      fprintf(stderr, " -M size        Interface MTU size (default %d)\n", default_mtu);
 #ifdef __APPLE__
       fprintf(stderr, " -v level       Verbosity level\n");
 #else
