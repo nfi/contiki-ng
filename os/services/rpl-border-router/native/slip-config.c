@@ -155,7 +155,7 @@ slip_config_handle_arguments(int argc, char **argv)
       fprintf(stderr, " -d[basedelay]  Minimum delay between outgoing SLIP packets.\n");
       fprintf(stderr, "                Actual delay is basedelay*(#6LowPAN fragments) milliseconds.\n");
       fprintf(stderr, "                -d is equivalent to -d10.\n");
-      exit(1);
+      exit(EXIT_FAILURE);
       break;
     }
   }
