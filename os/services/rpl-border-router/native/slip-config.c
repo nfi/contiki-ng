@@ -90,11 +90,7 @@ slip_config_handle_arguments(int argc, char **argv)
       break;
 
     case 's':
-      if(strncmp("/dev/", optarg, 5) == 0) {
-        slip_config_siodev = optarg + 5;
-      } else {
-        slip_config_siodev = optarg;
-      }
+      slip_config_siodev = optarg;
       break;
 
     case 't':
@@ -131,7 +127,7 @@ slip_config_handle_arguments(int argc, char **argv)
     case 'h':
     default:
       fprintf(stderr, "usage:  %s [options] ipaddress\n", prog);
-      fprintf(stderr, "example: border-router.native -L -v2 -s ttyUSB1 fd00::1/64\n");
+      fprintf(stderr, "example: border-router.native -L -v2 -s /dev/ttyUSB1 fd00::1/64\n");
       fprintf(stderr, "Options are:\n");
 #ifdef linux
       fprintf(stderr, " -B baudrate    9600,19200,38400,57600,115200,921600 (default 115200)\n");
