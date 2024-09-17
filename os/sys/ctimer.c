@@ -61,7 +61,7 @@ PROCESS_THREAD(ctimer_process, ev, data)
   PROCESS_BEGIN();
 
   for(c = list_head(ctimer_list); c != NULL; c = c->next) {
-    etimer_set(&c->etimer, c->etimer.timer.interval);
+    etimer_restart(&c->etimer);
   }
   initialized = true;
 
