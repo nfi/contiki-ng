@@ -162,7 +162,7 @@ PT_THREAD(cmd_ping(struct pt *pt, shell_output_func output, char *args))
     shell_output_6addr(output, &remote_addr);
     SHELL_OUTPUT(output, ", len %u, ttl %u, delay %lu ms\n",
                  curr_ping_datalen, curr_ping_ttl,
-                 (unsigned long)((1000 * (clock_time() - timeout_timer.timer.start)) / CLOCK_SECOND));
+                 (unsigned long)((1000 * (clock_time() - etimer_start_time(&timeout_timer))) / CLOCK_SECOND));
   }
 
   PT_END(pt);
